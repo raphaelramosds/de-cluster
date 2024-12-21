@@ -1,19 +1,23 @@
-## Cluster for Data Engineering
+# Cluster for Data Engineering
 
 This script deploys a cluster in fully distributed mode using Docker as the underlying infrastructure.
 
 ## How to run it
 
-```bash
-# Build image
-docker compose build
+### Build it
 
-# Build image and run containers
+```bash
+make
+```
+
+### Run it
+
+```bash
 docker compose up -d
 ```
 
-## Licenses
+## Acknowledgment 
 
-- Most part of this script was developed by Copyright (c) 2022-2025 [CARLOS M. D. VIEGAS](https://github.com/cmdviegas).
+- Most part of this script was developed by [CARLOS M. D. VIEGAS](https://github.com/cmdviegas).
 - This script is licensed under the [MIT License](https://github.com/cmdviegas/docker-hadoop-cluster/blob/master/LICENSE) and is free, open-source software.
-- `Apache Hadoop` and `Apache Spark` are licensed under the [Apache License](https://github.com/cmdviegas/docker-hadoop-cluster/blob/master/LICENSE.apache) and are also free, open-source software.
+- *Apache Hadoop*, *Apache Kafka*, *Apache Airflow* and *Apache Spark* are licensed under the [Apache License](https://github.com/cmdviegas/docker-hadoop-cluster/blob/master/LICENSE.apache) and are also free, open-source software.

@@ -67,22 +67,23 @@ WORKDIR ${MYDIR}
 ENV HADOOP_HOME="${MYDIR}/hadoop"
 ENV SPARK_HOME="${MYDIR}/spark"
 ENV KAFKA_HOME="${MYDIR}/kafka"
-ENV MASTER_HOSTNAME="${MASTER_HOSTNAME}"
 
 # Copy all files from local folder to container, except the ones in .dockerignore
 COPY . .
 
 # Set permissions to user folder
 RUN echo "SETTING PERMISSIONS..." \
-    && sudo -S chown "${USERNAME}:${USERNAME}" -R ${MYDIR}
+&& sudo -S chown "${USERNAME}:${USERNAME}" -R ${MYDIR}
 
 # Extract Hadoop/Spark to the container filesystem
 ARG SPARK_VER
 ARG HADOOP_VER
 ARG KAFKA_VER
+ARG MASTER_HOST
 ENV SPARK_VERSION=${SPARK_VER}
 ENV HADOOP_VERSION=${HADOOP_VER}
 ENV KAFKA_VERSION=${KAFKA_VER}
+ENV MASTER_HOSTNAME=${MASTER_HOST}
 
 RUN if [ ! -f ${MYDIR}/hadoop-${HADOOP_VERSION}.tar.gz ]; then \
     aria2c -x 16 --check-certificate=false --allow-overwrite=false \
@@ -131,9 +132,9 @@ RUN echo "DOWNLOADING DEBEZIUM MONGODB CONECTOR..." \
 
 # Set up KRaft properties
 RUN sed -i \
-    -e 's/^controller\.quorum\.voters=.*/controller.quorum.voters=1@${MASTER_HOSTNAME}:9093/' \
-    -e 's/^listeners=.*/listeners=PLAINTEXT:\/\/${MASTER_HOSTNAME}:9092,CONTROLLER:\/\/${MASTER_HOSTNAME}:9093/' \
-    -e 's/^advertised\.listeners=.*/advertised.listeners=PLAINTEXT:\/\/${MASTER_HOSTNAME}:9092/' \
+    -e "s/^controller\.quorum\.voters=.*/controller.quorum.voters=1@${MASTER_HOSTNAME}:9093/" \
+    -e "s/^listeners=.*/listeners=PLAINTEXT:\/\/${MASTER_HOSTNAME}:9092,CONTROLLER:\/\/${MASTER_HOSTNAME}:9093/" \
+    -e "s/^advertised\.listeners=.*/advertised.listeners=PLAINTEXT:\/\/${MASTER_HOSTNAME}:9092/" \
     ${KAFKA_HOME}/config/kraft/server.properties
 
 # Set up Kafka Connect

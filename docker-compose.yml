@@ -30,7 +30,7 @@ services:
         SPARK_VER: ${SPARK_VERSION}
         HADOOP_VER: ${HADOOP_VERSION}
         KAFKA_VER: ${KAFKA_VERSION}
-        MASTER_HOSTNAME: ${MASTER_HOSTNAME}
+        MASTER_HOST: ${MASTER_HOSTNAME}
     tty: true
     restart: no
     networks:
@@ -89,7 +89,8 @@ services:
     ports:
       - "27017:27017"
     networks:
-      - spark_network
+      spark_network:
+        ipv4_address: 172.31.0.8
 
 networks:
   spark_network:

@@ -1,2 +1,4 @@
 *gz
 *.jar
+config_files/airflow/logs
+!config_files/airflow/logs/README.md
