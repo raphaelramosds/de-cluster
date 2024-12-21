@@ -48,3 +48,8 @@ export YARN_NODEMANAGER_USER="${HDFS_NAMENODE_USER}"
 # SPARK
 export SPARK_HOME="${HOME}/spark"
 addToPATH "${SPARK_HOME}/bin:${SPARK_HOME}/sbin"
+
+# KAFKA
+export KAFKA_HOME="${HOME}/kafka"
+addToPATH "${KAFKA_HOME}/bin"
+export KAFKA_CLUSTER_ID="$(kafka-storage.sh random-uuid)"

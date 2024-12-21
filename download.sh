@@ -15,5 +15,17 @@
 #
 
 echo "Downloading Apache Hadoop 3.4.1 and Apache Spark 3.5.3 ..."
-wget -nc --no-check-certificate https://archive.apache.org/dist/hadoop/core/hadoop-3.4.1/hadoop-3.4.1.tar.gz
-wget -nc --no-check-certificate https://archive.apache.org/dist/spark/spark-3.5.3/spark-3.5.3-bin-hadoop3.tgz
+wget -nc --no-check-certificate https://dlcdn.apache.org/hadoop/common/hadoop-3.4.1/hadoop-3.4.1.tar.gz
+wget -nc --no-check-certificate https://dlcdn.apache.org/spark/spark-3.5.3/spark-3.5.3-bin-hadoop3.tgz
+
+echo "Downloading JDBC driver ..."
+wget -nc --no-check-certificate https://jdbc.postgresql.org/download/postgresql-42.7.4.jar
+
+echo "Downloading Apache Kafka ..."
+wget -nc --no-check-certificate https://archive.apache.org/dist/kafka/3.4.1/kafka_2.12-3.4.1.tgz
+
+echo "Downloading Postgres conector Debezium ..."
+wget -nc --no-check-certificate https://repo1.maven.org/maven2/io/debezium/debezium-connector-postgres/2.3.0.Final/debezium-connector-postgres-2.3.0.Final-plugin.tar.gz
+
+echo "Downloading MongoDB conector Debezium ..."
+wget -nc --no-check-certificate https://repo1.maven.org/maven2/io/debezium/debezium-connector-mongodb/2.7.3.Final/debezium-connector-mongodb-2.7.3.Final-plugin.tar.gz

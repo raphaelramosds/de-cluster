@@ -66,6 +66,8 @@ WORKDIR ${MYDIR}
 # Configure Hadoop enviroment variables
 ENV HADOOP_HOME="${MYDIR}/hadoop"
 ENV SPARK_HOME="${MYDIR}/spark"
+ENV KAFKA_HOME="${MYDIR}/kafka"
+ENV MASTER_HOSTNAME="${MASTER_HOSTNAME}"
 
 # Copy all files from local folder to container, except the ones in .dockerignore
 COPY . .
@@ -77,8 +79,10 @@ RUN echo "SETTING PERMISSIONS..." \
 # Extract Hadoop/Spark to the container filesystem
 ARG SPARK_VER
 ARG HADOOP_VER
+ARG KAFKA_VER
 ENV SPARK_VERSION=${SPARK_VER}
 ENV HADOOP_VERSION=${HADOOP_VER}
+ENV KAFKA_VERSION=${KAFKA_VER}
 
 RUN if [ ! -f ${MYDIR}/hadoop-${HADOOP_VERSION}.tar.gz ]; then \
     aria2c -x 16 --check-certificate=false --allow-overwrite=false \
@@ -94,6 +98,13 @@ RUN if [ ! -f ${MYDIR}/spark-${SPARK_VERSION}-bin-hadoop3.tgz ]; then \
 RUN tar -zxf spark-${SPARK_VERSION}-bin-hadoop3.tgz -C ${MYDIR} && rm -rf spark-${SPARK_VERSION}-bin-hadoop3.tgz
 RUN ln -sf ${MYDIR}/spark-3*-bin-hadoop3 ${SPARK_HOME}
 
+RUN if [ ! -f ${MYDIR}/kafka_${KAFKA_VERSION}.tgz ]; then \
+    aria2c -x 16 --check-certificate=false --allow-overwrite=false \
+    https://archive.apache.org/dist/kafka/3.4.1/kafka_${KAFKA_VERSION}.tgz; \
+    fi
+RUN tar -zxf kafka_${KAFKA_VERSION}.tgz -C ${MYDIR} && rm -rf kafka_${KAFKA_VERSION}.tgz
+RUN ln -sf ${MYDIR}/kafka_${KAFKA_VERSION} ${KAFKA_HOME}
+
 # Additional libs for Spark
 # PostgresSQL JDBC
 RUN echo "DOWNLOADING JDBC..." \
@@ -106,6 +117,30 @@ RUN echo "DOWNLOADING GRAPHFRAMES..." \
 # Install graphframes / pandas (for Spark GraphX/Graphframes and MLlib)
 RUN echo "INSTALLING PANDAS..." \
     && pip install --no-warn-script-location -q graphframes pandas
+
+# Additional libs for Kafka
+RUN mkdir -p ${KAFKA_HOME}/connect
+
+RUN echo "DOWNLOADING DEBEZIUM POSTGRES CONECTOR..." \
+    && aria2c -x 16 --check-certificate=false --allow-overwrite=false \
+    https://repo1.maven.org/maven2/io/debezium/debezium-connector-postgres/2.3.0.Final/debezium-connector-postgres-2.3.0.Final-plugin.tar.gz -d ${KAFKA_HOME}/connect
+
+RUN echo "DOWNLOADING DEBEZIUM MONGODB CONECTOR..." \
+    && aria2c -x 16 --check-certificate=false --allow-overwrite=false \
+    https://repo1.maven.org/maven2/io/debezium/debezium-connector-mongodb/2.7.3.Final/debezium-connector-mongodb-2.7.3.Final-plugin.tar.gz -d ${KAFKA_HOME}/connect
+
+# Set up KRaft properties
+RUN sed -i \
+    -e 's/^controller\.quorum\.voters=.*/controller.quorum.voters=1@${MASTER_HOSTNAME}:9093/' \
+    -e 's/^listeners=.*/listeners=PLAINTEXT:\/\/${MASTER_HOSTNAME}:9092,CONTROLLER:\/\/${MASTER_HOSTNAME}:9093/' \
+    -e 's/^advertised\.listeners=.*/advertised.listeners=PLAINTEXT:\/\/${MASTER_HOSTNAME}:9092/' \
+    ${KAFKA_HOME}/config/kraft/server.properties
+
+# Set up Kafka Connect
+RUN sed -i \
+    -e "s/^bootstrap\.servers=.*/bootstrap.servers=${MASTER_HOSTNAME}:9092/" \
+    -e "s|^#plugin\.path=.*|plugin.path=${KAFKA_HOME}/connect|" \
+    ${KAFKA_HOME}/config/connect-standalone.properties
 
 # Optional (convert charset from UTF-16 to UTF-8)
 RUN dos2unix config_files/*
@@ -133,4 +168,3 @@ RUN sudo rm -rf config_files/ /tmp/* /var/tmp/*
 # Run 'bootstrap.sh' script on boot
 RUN chmod 0700 bootstrap.sh config-xml.sh
 ENTRYPOINT ${MYDIR}/bootstrap.sh
-#CMD MASTER

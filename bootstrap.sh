@@ -143,6 +143,17 @@ if [ "$1" == "MASTER" ] ; then
     printf "${INFO} Checking YARN nodes list${RESET_COLORS}...\n"
     yarn node -list
 
+    printf "${INFO} Creating Kafka logs\n"
+    kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c $KAFKA_HOME/config/kraft/server.properties
+
+    printf "${INFO} Starting Kafka server\n"
+    kafka-server-start.sh $KAFKA_HOME/config/kraft/server.properties &
+    sleep 5
+
+    printf "${INFO} Starting Kafka Connect\n"
+    connect-standalone.sh $KAFKA_HOME/config/connect-standalone.properties &
+    sleep 5
+
     printf "\n${INFO} ${GREEN_COLOR}$(tput blink)ALL SET!${RESET_COLORS}\n\n"
     printf "TIP: To access ${MASTER_HOSTNAME}, type: ${YELLOW_COLOR}docker exec -it ${MASTER_HOSTNAME} /bin/bash${RESET_COLORS}\n"
 fi

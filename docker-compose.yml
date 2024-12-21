@@ -29,6 +29,8 @@ services:
         PASS: ${PASSWORD} # USER PASSWORD (change at .env file)
         SPARK_VER: ${SPARK_VERSION}
         HADOOP_VER: ${HADOOP_VERSION}
+        KAFKA_VER: ${KAFKA_VERSION}
+        MASTER_HOSTNAME: ${MASTER_HOSTNAME}
     tty: true
     restart: no
     networks:
@@ -71,6 +73,23 @@ services:
       - ./myfiles:/home/${USERNAME}/myfiles
       - .env:/home/${USERNAME}/.env
       - /home/${USERNAME}/
+
+  # mongodb:
+  #   container_name: mongodb
+  #   image: mongo
+  #   restart: always
+  #   command: ["bash", "-c", "mongod --replSet rs0 --bind_ip_all --noauth"]
+  #   healthcheck:
+  #     test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'localhost:27017'}]}) }" | mongosh --port 27017 --quiet
+  #     interval: 5s
+  #     timeout: 30s
+  #     start_period: 0s
+  #     start_interval: 1s
+  #     retries: 30
+  #   ports:
+  #     - "27017:27017"
+  #   networks:
+  #     - spark_network
 
 networks:
   spark_network:
