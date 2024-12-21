@@ -1,4 +1,4 @@
-## Deploying a cluster with Apache Hadoop 3.4.x + Apache Spark 3.5.x + Apache Kafka + Apache Airflow
+## Cluster for Data Engineering
 
 This script deploys a cluster in fully distributed mode using Docker as the underlying infrastructure.
 
