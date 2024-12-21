@@ -40,7 +40,7 @@ RUN echo "RUNNING APT UPDATE..." \
 RUN echo "RUNNING APT-GET TO INSTALL REQUIRED RESOURCES..." \ 
     && DEBIAN_FRONTEND=noninteractive DEBCONF_NOWARNINGS=yes \
     apt-get install -qq --no-install-recommends \
-    sudo vim nano dos2unix ssh wget aria2 openjdk-11-jdk-headless \
+    sudo curl vim nano dos2unix ssh wget aria2 openjdk-11-jdk-headless \
     python3.10-minimal python3-pip iproute2 iputils-ping net-tools \
     postgresql-client < /dev/null > /dev/null
 
