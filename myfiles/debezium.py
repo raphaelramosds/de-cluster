@@ -13,15 +13,15 @@
 # ----------------------------------------------- 
 #
 # 1. Abrir connect
-#   curl -X POST -H "Content-Type: application/json" --data @$KAFKA_HOME/connect/debezium-connector-mongodb/mongodb.json http://master:8083/connectors
+#   curl -X POST -H "Content-Type: application/json" --data @$HOME/myfiles/mongodb.json http://spark-master:8083/connectors
 #
 # 2. Executar script
 #   spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.1 main.py
 #
 # Comandos Kafka:
-#   kafka-topics.sh --list --bootstrap-server master:9092
-#   kafka-topics.sh --bootstrap-server master:9092 --delete --topic meu-topico.engdados.alunos
-#   kafka-console-consumer.sh --topic meu-topico.engdados.alunos --from-beginning --bootstrap-server master:9092
+#   kafka-topics.sh --list --bootstrap-server spark-master:9092
+#   kafka-topics.sh --bootstrap-server spark-master:9092 --delete --topic meu-topico.engdados.alunos
+#   kafka-console-consumer.sh --topic meu-topico.engdados.alunos --from-beginning --bootstrap-server spark-master:9092
 
 #!/usr/bin/env python
 

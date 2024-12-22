@@ -2,7 +2,7 @@ from pymongo import MongoClient
 
 # Credenciais do MongoDB
 mongo_port = 27017
-mongo_host = 'localhost'
+mongo_host = 'mongodb'
 mongo_uri = f"mongodb://{mongo_host}:{mongo_port}/?replicaSet=rs0"
 mongo_db = 'engdados'
 

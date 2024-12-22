@@ -124,11 +124,13 @@ RUN mkdir -p ${KAFKA_HOME}/connect
 
 RUN echo "DOWNLOADING DEBEZIUM POSTGRES CONECTOR..." \
     && aria2c -x 16 --check-certificate=false --allow-overwrite=false \
-    https://repo1.maven.org/maven2/io/debezium/debezium-connector-postgres/2.3.0.Final/debezium-connector-postgres-2.3.0.Final-plugin.tar.gz -d ${KAFKA_HOME}/connect
+    https://repo1.maven.org/maven2/io/debezium/debezium-connector-postgres/2.3.0.Final/debezium-connector-postgres-2.3.0.Final-plugin.tar.gz
+RUN tar zxf debezium-connector-postgres-2.3.0.Final-plugin.tar.gz -C ${KAFKA_HOME}/connect
 
 RUN echo "DOWNLOADING DEBEZIUM MONGODB CONECTOR..." \
-    && aria2c -x 16 --check-certificate=false --allow-overwrite=false \
-    https://repo1.maven.org/maven2/io/debezium/debezium-connector-mongodb/2.7.3.Final/debezium-connector-mongodb-2.7.3.Final-plugin.tar.gz -d ${KAFKA_HOME}/connect
+&& aria2c -x 16 --check-certificate=false --allow-overwrite=false \
+https://repo1.maven.org/maven2/io/debezium/debezium-connector-mongodb/2.7.3.Final/debezium-connector-mongodb-2.7.3.Final-plugin.tar.gz
+RUN tar zxf debezium-connector-mongodb-2.7.3.Final-plugin.tar.gz -C ${KAFKA_HOME}/connect
 
 # Set up KRaft properties
 RUN sed -i \
@@ -165,6 +167,7 @@ RUN cat .ssh/id_rsa.pub >> .ssh/authorized_keys && chmod 0600 .ssh/authorized_ke
 
 # Cleaning
 RUN sudo rm -rf config_files/ /tmp/* /var/tmp/*
+RUN sudo rm *gz
 
 # Run 'bootstrap.sh' script on boot
 RUN chmod 0700 bootstrap.sh config-xml.sh
