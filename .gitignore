@@ -1,6 +1,8 @@
 *gz
 *.jar
 
+**/__pycache__
+
 !**/README.md
 
 config_files/airflow/logs/
