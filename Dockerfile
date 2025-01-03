@@ -25,7 +25,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Get username and password from build arguments
 ARG USER
 ARG PASS
-ENV USERNAME="${USER}"
+ENV USER_NAME="${USER}"
 ENV PASSWORD="${PASS}"
 
 # Local mirror
@@ -52,15 +52,15 @@ RUN ln -sf /usr/bin/python3.10 /usr/bin/python
 RUN ln -sf /usr/bin/python /usr/bin/python3
 
 # Creates user and add it to sudoers 
-RUN adduser --disabled-password --gecos "" ${USERNAME}
-RUN echo "${USERNAME}:${PASSWORD}" | chpasswd
-RUN usermod -aG sudo ${USERNAME}
+RUN adduser --disabled-password --gecos "" ${USER_NAME}
+RUN echo "${USER_NAME}:${PASSWORD}" | chpasswd
+RUN usermod -aG sudo ${USER_NAME}
 # Passwordless sudo for created user
-RUN echo "${USERNAME} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${USERNAME}
-USER ${USERNAME}
+RUN echo "${USER_NAME} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${USER_NAME}
+USER ${USER_NAME}
 
 # Set working dir
-ENV MYDIR="/home/${USERNAME}"
+ENV MYDIR="/home/${USER_NAME}"
 WORKDIR ${MYDIR}
 
 # Configure Hadoop enviroment variables
@@ -73,7 +73,7 @@ COPY . .
 
 # Set permissions to user folder
 RUN echo "SETTING PERMISSIONS..." \
-&& sudo -S chown "${USERNAME}:${USERNAME}" -R ${MYDIR}
+&& sudo -S chown "${USER_NAME}:${USER_NAME}" -R ${MYDIR}
 
 # Extract Hadoop/Spark to the container filesystem
 ARG SPARK_VER
@@ -150,7 +150,7 @@ RUN dos2unix config_files/*
 
 # Load environment variables into .bashrc file
 RUN cat config_files/system/bash_profile >> ${MYDIR}/.bashrc
-RUN sed -i "s/^export\? HDFS_NAMENODE_USER=.*/export HDFS_NAMENODE_USER=${USERNAME}/" "${MYDIR}/.bashrc"
+RUN sed -i "s/^export\? HDFS_NAMENODE_USER=.*/export HDFS_NAMENODE_USER=${USER_NAME}/" "${MYDIR}/.bashrc"
 
 # Copy config files to Hadoop config folder
 RUN cp config_files/hadoop/* ${HADOOP_HOME}/etc/hadoop/

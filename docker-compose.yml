@@ -25,7 +25,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        USER: ${USERNAME} # USERNAME (change at .env file)
+        USER: ${USER_NAME} # USER_NAME (change at .env file)
         PASS: ${PASSWORD} # USER PASSWORD (change at .env file)
         SPARK_VER: ${SPARK_VERSION}
         HADOOP_VER: ${HADOOP_VERSION}
@@ -43,13 +43,13 @@ services:
       - "18080:18080/tcp" # SPARK HISTORY SERVER
       - "2222:22/tcp" # SSH
     volumes: 
-      - ./myfiles:/home/${USERNAME}/myfiles
-      - .env:/home/${USERNAME}/.env
-      - master:/home/${USERNAME}/
+      - ./myfiles:/home/${USER_NAME}/myfiles
+      - .env:/home/${USER_NAME}/.env
+      - master:/home/${USER_NAME}/
     entrypoint: ./bootstrap.sh
     command: MASTER
     healthcheck:
-      test: bash -c 'ssh -q -o ConnectTimeout=1 ${USERNAME}@${MASTER_HOSTNAME} exit'
+      test: bash -c 'ssh -q -o ConnectTimeout=1 ${USER_NAME}@${MASTER_HOSTNAME} exit'
       start_period: 3s
       interval: 2s
       timeout: 3s
@@ -70,9 +70,9 @@ services:
     entrypoint: ./bootstrap.sh
     command: WORKER
     volumes: 
-      - ./myfiles:/home/${USERNAME}/myfiles
-      - .env:/home/${USERNAME}/.env
-      - /home/${USERNAME}/
+      - ./myfiles:/home/${USER_NAME}/myfiles
+      - .env:/home/${USER_NAME}/.env
+      - /home/${USER_NAME}/
 
   mongodb:
     container_name: mongodb

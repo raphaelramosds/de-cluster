@@ -162,5 +162,5 @@ fi
 
 [ "$1" == "WORKER" ] && printf "${INFO} I'm up and ready${RESET_COLORS}!\n"
 
-unset USERNAME
+unset USER_NAME
 unset PASSWORD

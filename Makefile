@@ -10,7 +10,7 @@ download:
 # Target to build the Docker image
 .PHONY: build
 build:
-	docker compose build
+	docker compose build spark-master
 
 # Clean target (optional, if you want a cleanup step)
 .PHONY: clean
