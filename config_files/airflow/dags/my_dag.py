@@ -11,8 +11,8 @@ def my_dag():
     read_data = SparkSubmitOperator(
         task_id="read_data",
         application="./scripts/read.py",
-        conn_id="my_spark_con",
-        verbose=True
+        conn_id="spark_default",
+        verbose=False
     )
     read_data
 
