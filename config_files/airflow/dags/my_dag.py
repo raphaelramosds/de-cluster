@@ -11,8 +11,18 @@ def my_dag():
     read_data = SparkSubmitOperator(
         task_id="read_data",
         application="./scripts/read.py",
-        conn_id="spark_default",
-        verbose=False
+        conn_id=None,
+        verbose=False,
+        conf = {
+            'spark.master' : 'yarn',
+            'spark.submit.deployMode' : 'cluster',
+            'spark.hadoop.yarn.resourcemanager.address' : 'http://spark-master:8088',
+            'spark.hadoop.fs.defaultFS' : 'hdfs://spark-master:9000'
+        },
+        env_vars = {
+            'HADOOP_CONF_DIR' : '/opt/hadoop/conf',
+            'YARN_CONF_DIR' : '/opt/hadoop/conf',
+        }
     )
     read_data
 
