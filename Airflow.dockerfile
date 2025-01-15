@@ -12,4 +12,4 @@ RUN export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-arm64"
 
 # Spark dependencies
 USER airflow
-RUN pip install --no-cache-dir apache-airflow-providers-apache-spark pyspark
+RUN pip install --no-cache-dir apache-airflow-providers-apache-spark apache-airflow pyspark

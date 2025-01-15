@@ -46,6 +46,8 @@ services:
       - ./myfiles:/home/${USER_NAME}/myfiles
       - .env:/home/${USER_NAME}/.env
       - master:/home/${USER_NAME}/
+      - hadoop-conf-dir:/home/${USER_NAME}/hadoop/etc/hadoop
+      - ssh-dir:/home/${USER_NAME}/.ssh
     entrypoint: ./bootstrap.sh
     command: MASTER
     healthcheck:
@@ -102,3 +104,7 @@ networks:
 
 volumes:
   master:
+  hadoop-conf-dir:
+    external: false
+  ssh-dir:
+    external: false

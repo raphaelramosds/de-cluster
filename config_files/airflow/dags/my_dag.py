@@ -1,30 +1,27 @@
-from airflow.decorators import dag, task
+from airflow.operators.bash import BashOperator
+from airflow.decorators import dag
 from datetime import datetime
-from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 
-@dag (
+@dag(
     schedule=None,
-    catchup=False
+    catchup=False,
+    start_date=datetime(2025, 1, 15)
 )
-
 def my_dag():
-    read_data = SparkSubmitOperator(
+    # Define the task to run a Spark job via SSH with additional configurations
+    read_data = BashOperator(
         task_id="read_data",
-        application="./scripts/read.py",
-        conn_id=None,
-        verbose=False,
-        conf = {
-            'spark.master' : 'yarn',
-            'spark.submit.deployMode' : 'cluster',
-            'spark.hadoop.yarn.resourcemanager.address' : 'http://spark-master:8088',
-            'spark.hadoop.fs.defaultFS' : 'hdfs://spark-master:9000'
-        },
-        env_vars = {
-            'HADOOP_CONF_DIR' : '/opt/hadoop/conf',
-            'YARN_CONF_DIR' : '/opt/hadoop/conf',
-        }
+        bash_command=(
+            "ssh spark@spark-master "
+            "/home/spark/spark/bin/spark-submit "
+            "--conf spark.driver.memory=512m "
+            "--conf spark.executor.memory=512m "
+            "--conf spark.executor.cores=1 "
+            "--conf spark.num.executors=2 "
+            "/home/spark/myfiles/read.py"
+        )
     )
-    read_data
+
+    read_data  # No need to set dependencies here if it's the only task
 
 my_dag()
-
