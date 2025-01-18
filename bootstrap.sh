@@ -150,6 +150,10 @@ if [ "$1" == "MASTER" ] ; then
     kafka-server-start.sh $KAFKA_HOME/config/kraft/server.properties &
     sleep 5
 
+    printf "${INFO} Starting Spark Connect server\n"
+    start-connect-server.sh --packages org.apache.spark:spark-connect_2.12:3.5.4 &
+    sleep 5
+
     printf "${INFO} Starting Kafka Connect\n"
     connect-standalone.sh $KAFKA_HOME/config/connect-standalone.properties &
     sleep 5

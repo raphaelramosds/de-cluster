@@ -10,6 +10,7 @@ download:
 # Target to build the Docker image
 .PHONY: build
 build:
+	docker compose build airflow-webserver
 	docker compose build spark-master
 
 # Clean target (optional, if you want a cleanup step)

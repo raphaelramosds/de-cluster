@@ -118,6 +118,9 @@ RUN echo "DOWNLOADING GRAPHFRAMES..." \
 # Install graphframes / pandas (for Spark GraphX/Graphframes and MLlib)
 RUN echo "INSTALLING PANDAS..." \
     && pip install --no-warn-script-location -q graphframes pandas
+# Install packages for Spark Connect to work properly
+RUN echo "INSTALLING SPARK CONNECT DEPENDENCIES..." \
+    && pip install --no-warn-script-location -q pyarrow grpcio grpcio-status protobuf
 
 # Additional libs for Kafka
 RUN mkdir -p ${KAFKA_HOME}/connect
