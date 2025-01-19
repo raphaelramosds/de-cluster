@@ -91,7 +91,10 @@ x-airflow-common:
 
 services:
   postgres:
-    image: postgres:13
+    image: sparkcluster/postgres:13
+    build:
+      context: .
+      dockerfile: Postgresql.dockerfile
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow

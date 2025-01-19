@@ -1,0 +1,16 @@
+{
+    "name": "psql",
+    "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "database.hostname": "postgres",
+        "database.server.name": "postgres-db",
+        "database.port": "5432",
+        "database.user": "airflow",
+        "database.password": "airflow",
+        "database.dbname" : "airflow",
+        "plugin.name": "pgoutput",
+        "topic.prefix": "airflow",
+        "table.whitelist": "custos",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter"
+    }
+}
