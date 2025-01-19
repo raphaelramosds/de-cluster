@@ -91,10 +91,7 @@ x-airflow-common:
 
 services:
   postgres:
-    image: sparkcluster/postgres:13
-    build:
-      context: .
-      dockerfile: Postgresql.dockerfile
+    image: postgres:13
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
@@ -107,6 +104,10 @@ services:
       retries: 5
       start_period: 5s
     restart: always
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
     networks:
       spark_network:
         ipv4_address: 172.31.0.6

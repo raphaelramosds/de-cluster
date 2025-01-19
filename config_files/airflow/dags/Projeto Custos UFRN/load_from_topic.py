@@ -1,10 +1,11 @@
 from airflow import DAG
+from datetime import datetime
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
-from datetime import datetime
+
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
+from pyspark.sql.functions import from_json
+from pyspark.sql.types import StructType, IntegerType, DoubleType, StructField, StringType
 
 default_args = {
     'owner': 'airflow',
@@ -16,7 +17,6 @@ default_args = {
 def get_spark_session():
     return SparkSession.builder \
         .appName("Ler Topico Kafka") \
-        .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2") \
         .remote("sc://spark-master:15002")\
         .getOrCreate()
 
@@ -35,7 +35,7 @@ def read_kafka_topic():
     df = (spark.readStream
         .format("kafka")
         .option("kafka.bootstrap.servers", "spark-master:9092")
-        .option("subscribe", "airflow.custos")
+        .option("subscribe", "airflow.public.custos")
         .option("startingOffsets", "earliest") 
         .load()
     )
@@ -45,7 +45,7 @@ def read_kafka_topic():
             StructField("after", StructType([
                 StructField("id_unidade", IntegerType(), True),
                 StructField("unidade", StringType(), True),
-                StructField("natureza", StringType(), True),
+                StructField("natureza_despesa", StringType(), True),
                 StructField("ano", IntegerType(), True),
                 StructField("valor", DoubleType(), True),
             ])),
@@ -54,12 +54,15 @@ def read_kafka_topic():
 
     dx = df.select(from_json(df.value.cast("string"), schema).alias("data")).select("data.payload.after.*")
 
-    ds = (dx.writeStream 
-        .outputMode("append") 
-        .format("console")
-        .option("truncate", False)
+    ds = dx.writeStream \
+        .outputMode("append") \
+        .format("memory") \
+        .queryName("kafka_stream_data") \
         .start()
-    )
+
+    static_df = spark.sql("SELECT * FROM kafka_stream_data")
+
+    static_df.show()
 
     ds.stop()
 
@@ -70,6 +73,10 @@ with DAG(
     catchup=False,
 ) as dag:
     task_init_psql_connect = init_psql_connect()
-    task_read_kafka_topic = read_kafka_topic()
+
+    task_read_kafka_topic = PythonOperator(
+        task_id="read_kafka_topic",
+        python_callable=read_kafka_topic
+    )
 
     task_init_psql_connect >> task_read_kafka_topic

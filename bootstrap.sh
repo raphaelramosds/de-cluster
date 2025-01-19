@@ -151,7 +151,7 @@ if [ "$1" == "MASTER" ] ; then
     sleep 5
 
     printf "${INFO} Starting Spark Connect server\n"
-    start-connect-server.sh --packages org.apache.spark:spark-connect_2.12:3.5.4 &
+    start-connect-server.sh --packages org.apache.spark:spark-connect_2.12:3.5.4,org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2 &
     sleep 5
 
     printf "${INFO} Starting Kafka Connect\n"
